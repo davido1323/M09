@@ -22,25 +22,25 @@ let gamer = {
 };**/
 
 let jugadores = [{
-    posicio: 3,
+    posicio: 1,
     alies: "jperez",
     nom: "Jose",
     congnom: "Perez",
-    score: 1000
-},
-{
-    posicio: 14,
-    alies: "jsanz",
-    nom: "Juan",
-    congnom: "Sanz",
-    score: 300
+    score: 850
 },
 {
     posicio: 2,
+    alies: "jsanz",
+    nom: "Juan",
+    congnom: "Sanz",
+    score: 500
+},
+{
+    posicio: 3,
     alies: "mgutierrez",
     nom: "Maria",
     congnom: "Gutierrez",
-    score: 850
+    score: 69
 }
 ]
 
@@ -95,6 +95,10 @@ app.post('/gamer', function (req, res) {
                 mensaje: "Jugador creado",
                 Cuerpo: gamer
             };
+        }jugadores.sort((a,b) => (a.score < b.score ? 1: -1));
+        for (i = 0; i < jugadores.length; i++)
+        {
+            jugadores[i].posicio = i + 1;
         }   
     }
     res.send(respuesta);
@@ -104,15 +108,21 @@ app.get ("/hola", function (req, res){
     res.send('[GET]Saludos');
 });
 
+
 app.get ("/ranking", function (req, res){
-    jugadores.sort((a,b) => (a.score < b.score ? 1: -1));
-    for (i = 0; i < jugadores.length; i++)
-    {
-        jugadores[i].posicio = i + 1;
-    }
     res.send(jugadores);
 });
 
-app.listen(2999, () => {
-    console.log('El servidor esta inicializado en el puerto 2999');
+app.get ("/ranking/:alias", function (req, res) {
+    for(i = 0; i < jugadores.length; i++) {
+        if (req.params.alias == jugadores[i].alies){
+            res.send(jugadores[i]);
+        }
+    }
+});
+
+
+
+app.listen(3000, () => {
+    console.log('El servidor esta inicializado en el puerto 3000');
 });

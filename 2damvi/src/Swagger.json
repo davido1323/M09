@@ -1,0 +1,172 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is a simple API",
+    "version": "1.0.0",
+    "title": "Simple Inventory API",
+    "contact": {
+      "email": "you@your-company.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "check server",
+        "description": "Descripcion\n",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Server utiliza"
+            }
+          }
+        }
+      },
+    "/ranking": {
+      "get": {
+        "summary": "busca jugador",
+        "description": "Descripcion\n",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "search results matching criteria",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Players"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/players/{alias}": {
+      "get": {
+        "summary": "New player is born",
+        "description": "Adds an item to the system",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "alias",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "New player is born",
+            "schema": {
+              "$ref": "#/definitions/Player"
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "adds an inventory item",
+        "description": "Adds an item to the system",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "alias",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "Player",
+            "description": "Inventory item to add",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/Player"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "New player is born",
+            "schema": {
+              "$ref": "#/definitions/Player"
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "adds an inventory item",
+        "description": "Adds an item to the system",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "alias",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "Player",
+            "description": "Inventory item to add",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/Player"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "New player is born",
+            "schema": {
+              "$ref": "#/definitions/Player"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Player": {
+      "type": "object",
+      "required": [
+        "name",
+        "score",
+        "surname"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "David"
+        },
+        "surname": {
+          "type": "string",
+          "example": "Sanabria"
+        },
+        "score": {
+          "type": "integer",
+          "example": 50
+        }
+      }
+    },
+    "Players": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Player"
+      }
+    }
+  }
+}

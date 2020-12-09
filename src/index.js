@@ -13,7 +13,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 var apijs = require('./api.js');
 var { search } = require('./api.js');
 var { createPlayer } = require('./api.js');
-var { comprobadorDeDatos } = require('./api.js');
+var { comprobarDatos } = require('./api.js');
 var { enviarJugadores } = require('./api.js');
 //Configuracion principal del Servidor
 const port = process.env.PORT || 4567;
@@ -43,7 +43,7 @@ io.on('connection', (socket) =>{
 
   socket.on('player:create',(data)=>{
     var comprobar = apijs.search(data.alias);
-    var error = apijs.comprobadorDeDatos(data.alias, data.name, data.surname, data.score);
+    var error = apijs.comprobarDatos(data.alias, data.name, data.surname, data.score);
     //Emitir a todos los usuarios
     if(comprobar === true){
       if(error === true){

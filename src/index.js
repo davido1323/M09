@@ -11,7 +11,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 //ApiJS para WebSocket
 var apijs = require('./api.js');
-var { searcher } = require('./api.js');
+var { search } = require('./api.js');
 var { createPlayer } = require('./api.js');
 var { comprobadorDeDatos } = require('./api.js');
 var { enviarJugadores } = require('./api.js');
@@ -37,51 +37,25 @@ io.on('connection', (socket) =>{
       socket.emit('noexist', false);
     }
     else{
-      socket.emit('jugadores', player);
+      socket.emit('players', player);
     }
   })
-  
 
-
-
-
-
-
-  ///CODIGO BUENO///
-      //Crear un jugador
-    socket.on('player:create',(data)=>{
-      var ok = apijs.searcher(data.alias);
-      var hey = apijs.comprobadorDeDatos(data.alias, data.name, data.surname, data.score);
-      //Emitir a todos los usuarios
-      if(ok === true){
-        if(hey === true){
-          apijs.createPlayer(data.alias, data.name, data.surname, data.score);
-          io.sockets.emit('server:playercreated', data)
-        }else{
-          console.log("Parametros incorrectos");
-        }
+  socket.on('player:create',(data)=>{
+    var comprobar = apijs.search(data.alias);
+    var error = apijs.comprobadorDeDatos(data.alias, data.name, data.surname, data.score);
+    //Emitir a todos los usuarios
+    if(comprobar === true){
+      if(error === true){
+        apijs.createPlayer(data.alias, data.name, data.surname, data.score);
+        io.sockets.emit('server:playercreated', data)
       }else{
-        console.log("Ya hay un usuario en con ese alias"); 
+        console.log("Parametros incorrectos");
       }
-    });
-  
-      //Actualizar un jugador
-    socket.on('player:playerupdate',(data)=>{
-      //Emitir a todos los usuarios
-      io.sockets.emit('server:playerupdate', data)
-    });
-  
-      //Compra de Coins
-    socket.on('player:buycoin',(data)=>{
-      //Emitir a todos los usuarios
-      io.sockets.emit('server:buyshop', data)
-    });
-  
-      /*
-    socket.on('player:onlyadata', (data) =>{
-      //Emitir a todos menos al cliente en cuestion.
-      socket.broadcast.emit('server:onlyadata')
-    })*/
+    }else{
+      console.log("Ya hay un usuario en con ese alias"); 
+    }
+  });
 });
 
 //Uso de ApiJS

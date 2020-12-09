@@ -81,7 +81,7 @@ router.get('/players', function (req, res){
 });
 router.get('/players/:alias', function (req, res) {
     getjson();
-    //Player Search
+    //Player search
     var index = players.findIndex(j => j.alias === req.params.alias);
 
     if (index >= 0) {
@@ -132,7 +132,7 @@ router.delete('/players/:alias', function(req,res){
     } 
     else{
         getjson();
-        //Player Search
+        //Player search
         var index = players.findIndex(j => j.alias === paramAlias);
         var playerIndex = players.indexOf("Jugador");
         if (index != -1) {
@@ -190,7 +190,7 @@ function createPlayer(paramAlias, paramName, paramSurname, paramScore){
     });
     //Sort the ranking
     UpdateRanking();
-    //Search Player Again
+    //search Player Again
     index = players.findIndex(j => j.alias === paramAlias);
     //Response return
     response = code201;
@@ -202,7 +202,7 @@ function updatePlayer(paramAlias, paramName, paramSurname, paramScore){
     if (paramAlias === '' || paramName === '' || paramSurname === '' || parseInt(paramScore) <= 0 || paramScore === ''){
         response = codeError502
     }else{
-    //Player Search
+    //Player search
     var index = players.findIndex(j => j.alias === paramAlias)
 
     if (index != -1) {
@@ -221,7 +221,7 @@ function updatePlayer(paramAlias, paramName, paramSurname, paramScore){
         };
         //Sort the ranking
         UpdateRanking();
-        //Search Player Again
+        //search Player Again
         index = players.findIndex(j => j.alias === paramAlias);
         //Response return
         response = code202;
@@ -233,7 +233,7 @@ function updatePlayer(paramAlias, paramName, paramSurname, paramScore){
     return response;
 }
 
- function searcher(data) {
+ function search(data) {
     getjson();
     //El data.alias es el alias que envia el cliente (lo se por que hice un console 7.7)
     var index = players.findIndex(j => j.alias === data.alias)
@@ -249,7 +249,7 @@ function updatePlayer(paramAlias, paramName, paramSurname, paramScore){
     console.log(data)
     return ok;
 }
-function comprobadorDeDatos(paramAlias, paramName, paramSurname, paramScore){
+function comprobarDatos(paramAlias, paramName, paramSurname, paramScore){
     getjson();
     var hey = false;
     if (paramAlias === '' || paramName === '' || paramSurname === '' || parseInt(paramScore) <= 0 || paramScore === '' || isNaN(paramScore) || paramScore === null){
@@ -267,13 +267,8 @@ function enviarJugadores(data){
     return players[data];
     }
 }
-/*module.exports = {
-    //app,
-    searcher,
-    router
-}*/
 module.exports = router;
-module.exports.searcher = searcher;
+module.exports.search = search;
 module.exports.createPlayer = createPlayer;
-module.exports.comprobadorDeDatos = comprobadorDeDatos;
+module.exports.comprobarDatos = comprobarDatos;
 module.exports.enviarJugadores = enviarJugadores;

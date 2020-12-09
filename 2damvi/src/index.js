@@ -1,67 +1,93 @@
-const express = require ("express");
-const bodyParser = require ('body-parser');
-const app = express();
+'use strict';
+const path = require('path');
+const express = require("express");
+var app = express()
+//const bodyParser = require("body-parser");
 
-app.use(bodyParser.urlencoded({ extended: false}));
-app.use(bodyParser.json());
+//Swagger
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-let gamer = {
-    nombre: '',
-    apellido: '',
-    score: ''
-};
+//ApiJS para WebSocket
+var apijs = require('./api.js');
+var { searcher } = require('./api.js');
+var { createPlayer } = require('./api.js');
+var { comprobadorDeDatos } = require('./api.js');
+var { enviarJugadores } = require('./api.js');
+//Configuracion principal del Servidor
+const port = process.env.PORT || 4567;
+const server = app.listen(port, () => 
+    console.log("El servidor está inicializado en el puerto " + port
+));
 
-let respuesta = {
-    error: false,
-    codigo: 200,
-    mensaje: ''
-};
+//WebSockets
+const SocketIo = require('socket.io');
+const io = SocketIo(server);
 
-app.post('/gamer', function (req, res) {
-    var nom = req.body.nombre || null;
-    var cognom = req.body.apellido || null;
-    var puntuacio = req.body.score || null;
+io.on('connection', (socket) =>{
+    console.log('Nueva conexion de', socket.id);
+    //Escuchar evento
+  ///PRUEBAS///
 
-    if (nom == null || cognom == null || puntuacio == null)
-    {
-        respuesta = {
-            Codi: 502,
-            Error: false,
-            Missatge: 'Camps obligatoris camp nom, cognom o score'
-        }
+  
+  socket.on('player:look',(data)=>{
+    var player = apijs.enviarJugadores(parseInt(data));
+    if(player === false){
+      socket.emit('noexist', false);
     }
-    else 
-    {
-        if (gamer.nombre == nom && gamer.apellido == cognom)
-        {
-            respuesta = {
-            Codi: 503,
-            Error: true,
-            Missatge: 'El jugador ya fue creado previamente'
-            }
-        }
-        else
-        {
-            gamer = {
-                nombre: nom,
-                apellido: cognom,
-                score: puntuacio
-            };
-            respuesta = {
-                codigo: 200,
-                error: false,
-                mensaje: "Jugador creado",
-                Cuerpo: gamer
-            };
-        }   
+    else{
+      socket.emit('jugadores', player);
     }
-    res.send(respuesta);
+  })
+  
+
+
+
+
+
+
+  ///CODIGO BUENO///
+      //Crear un jugador
+    socket.on('player:create',(data)=>{
+      var ok = apijs.searcher(data.alias);
+      var hey = apijs.comprobadorDeDatos(data.alias, data.name, data.surname, data.score);
+      //Emitir a todos los usuarios
+      if(ok === true){
+        if(hey === true){
+          apijs.createPlayer(data.alias, data.name, data.surname, data.score);
+          io.sockets.emit('server:playercreated', data)
+        }else{
+          console.log("Parametros incorrectos");
+        }
+      }else{
+        console.log("Ya hay un usuario en con ese alias"); 
+      }
+    });
+  
+      //Actualizar un jugador
+    socket.on('player:playerupdate',(data)=>{
+      //Emitir a todos los usuarios
+      io.sockets.emit('server:playerupdate', data)
+    });
+  
+      //Compra de Coins
+    socket.on('player:buycoin',(data)=>{
+      //Emitir a todos los usuarios
+      io.sockets.emit('server:buyshop', data)
+    });
+  
+      /*
+    socket.on('player:onlyadata', (data) =>{
+      //Emitir a todos menos al cliente en cuestion.
+      socket.broadcast.emit('server:onlyadata')
+    })*/
 });
 
-app.get ("/hola", function (req, res){
-    res.send('[GET]Saludos');
-});
+//Uso de ApiJS
+app.use('/', apijs);
+app.use(express.urlencoded({ extended: false }));
+//HTML
+app.use(express.static(path.join(__dirname, 'public')));
 
-app.listen(3000, () => {
-    console.log('El servidor esta inicializado en el puerto 3000');
-});
+module.exports = app;

@@ -16,7 +16,7 @@ var { createPlayer } = require('./api.js');
 var { comprobarDatos } = require('./api.js');
 var { enviarJugadores } = require('./api.js');
 //Configuracion principal del Servidor
-const port = process.env.PORT || 4567;
+const port = process.env.PORT || 3000;
 const server = app.listen(port, () => 
     console.log("El servidor está inicializado en el puerto " + port
 ));

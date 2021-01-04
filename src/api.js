@@ -72,7 +72,7 @@ router.get('/', function (req, res) {
 });
 router.get('/ranking', function (req, res) {
     UpdateRanking();
-    let ranking = { namebreplayers: players.length, players: players };
+    let ranking = { players: players };
     res.send(ranking);
 });
 router.get('/players', function (req, res){
@@ -250,10 +250,10 @@ function updatePlayer(paramAlias, paramName, paramSurname, paramScore){
     console.log(data)
     return ok;
 }
-function comprobarDatos(paramAlias, paramName, paramSurname, paramScore){
+function comprobarDatos(paramAlias, paramName, paramSurname, paramScore, paramPasswrd){
     getjson();
     var hey = false;
-    if (paramAlias === '' || paramName === '' || paramSurname === '' || parseInt(paramScore) <= 0 || paramScore === '' || isNaN(paramScore) || paramScore === null){
+    if (paramAlias === '' || paramName === '' || paramSurname === '' || parseInt(paramScore) <= 0 || paramScore === '' || isNaN(paramScore) || paramScore === null || paramPasswrd === ''){
         hey = false;
     }else{
         hey = true;

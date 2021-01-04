@@ -109,6 +109,7 @@ router.post('/players/:alias', jsonParser   ,function (req, res) {
         
     }
     res.send(response);
+    savejson();
 });
 
 router.put('/players/:alias',jsonParser, function (req, res) {

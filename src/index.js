@@ -25,7 +25,7 @@ const server = app.listen(port, () =>
 const SocketIo = require('socket.io');
 const io = SocketIo(server);
 
-io.on('connection', (socket) =>{
+/*io.on('connection', (socket) =>{
     console.log('Nueva conexion de', socket.id);
     //Escuchar evento
   ///PRUEBAS///
@@ -56,7 +56,7 @@ io.on('connection', (socket) =>{
       console.log("Ya hay un usuario en con ese alias"); 
     }
   });
-});
+});*/
 
 //Uso de ApiJS
 app.use('/', apijs);

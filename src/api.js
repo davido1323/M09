@@ -200,7 +200,7 @@ function createPlayer(paramAlias, paramName, paramSurname, paramScore){
 }
 function updatePlayer(paramAlias, paramName, paramSurname, paramScore){
     getjson();
-    if (paramAlias === '' || paramName === '' || paramSurname === '' || parseInt(paramScore) <= 0 || paramScore === ''){
+    if (paramAlias === '' || paramName === '' || paramSurname === '' || parseInt(paramScore) <= 0 || paramScore === '' || paramPasswrd === ''){
         response = codeError502
     }else{
     //Player search
@@ -214,6 +214,7 @@ function updatePlayer(paramAlias, paramName, paramSurname, paramScore){
             name: paramName, 
             surname: paramSurname, 
             score: paramScore,
+            password: paramPasswrd,
             created:  players[index].created,
             updated: new Date(),
             coins: 10,

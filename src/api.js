@@ -27,9 +27,9 @@ var CatalogoHabilidades = [
 ];
 
 var players = [
-    { position: "1", alias: "jperez", name: "Jose", surname: "Perez", score: 1000, created: "2020-11-03T15:20:21.377Z", coins: 0, billetes: 0, habilidad1: false, habilidad2: false},
-    { position: "2", alias: "jsanz", name: "Juan", surname: "Sanz", score: 950, created: "2020-11-03T15:20:21.377Z", coins: 0, billetes: 0, habilidades: "?" },
-    { position: "3", alias: "mgutierrez", name: "Maria", surname: "Gutierrez", score: 850, created: "2020-11-03T15:20:21.377Z", coins: 0, billetes: 0, habilidades: "?" }
+    { position: "1", alias: "jperez", name: "Jose", surname: "Perez", score: 1000, password: "aguacate", created: "2020-11-03T15:20:21.377Z", coins: 0, billetes: 0, habilidad1: false, habilidad2: false},
+    { position: "2", alias: "jsanz", name: "Juan", surname: "Sanz", score: 950, password: "aguacate", created: "2020-11-03T15:20:21.377Z", coins: 0, billetes: 0, habilidades: "?" },
+    { position: "3", alias: "mgutierrez", name: "Maria", surname: "Gutierrez", score: 850, password: "aguacate", created: "2020-11-03T15:20:21.377Z", coins: 0, billetes: 0, habilidades: "?" }
 ];
 let response = {
     error: false,
@@ -99,12 +99,13 @@ router.post('/players/:alias', jsonParser   ,function (req, res) {
     var paramName = req.body.name || '';
     var paramSurname = req.body.surname || '';
     var paramScore = req.body.score || '';
+    var paramPasswrd = req.body.password || '';
     getjson();
-    if (paramAlias === '' || paramName === '' || paramSurname === '' || parseInt(paramScore) <= 0 || paramScore === '' || isNaN(paramScore)) {
+    if (paramAlias === '' || paramName === '' || paramSurname === '' || parseInt(paramScore) <= 0 || paramScore === '' || isNaN(paramScore) || paramPasswrd === '') {
         response = codeError502;
     } else {
         
-        response = createPlayer(paramAlias, paramName, paramSurname, paramScore);
+        response = createPlayer(paramAlias, paramName, paramSurname, paramScore, paramPasswrd);
         
     }
     res.send(response);

@@ -1,12 +1,11 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const app = express();
 var router = express.Router();
 const fs = require('fs'); 
 var jsonParser = bodyParser.json()
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+router.use(bodyParser.urlencoded({ extended: false }));
+router.use(bodyParser.json());
 
 let code100 = { code: 100, error: false, message: '2-DAMVI Server Up' };
 let code200 = { code: 200, error: false, message: 'Player Exists' };
@@ -94,13 +93,12 @@ router.get('/players/:alias', function (req, res) {
     }
     res.send(response);
 });
-router.post('/players/:alias', jsonParser   ,function (req, res) {
+router.post('/players/:alias', jsonParser, function (req, res) {
     var paramAlias = req.params.alias || '';
     var paramName = req.body.name || '';
     var paramSurname = req.body.surname || '';
     var paramScore = req.body.score || '';
     var paramPasswrd = req.body.password || '';
-    getjson();
     if (paramAlias === '' || paramName === '' || paramSurname === '' || parseInt(paramScore) <= 0 || paramScore === '' || isNaN(paramScore) || paramPasswrd === '') {
         response = codeError502;
     } else {
@@ -176,7 +174,8 @@ router.get('/buycoins/:alias', function(req,res){
     res.send(response);
 });
 
-function createPlayer(paramAlias, paramName, paramSurname, paramScore){
+function createPlayer(paramAlias, paramName, paramSurname, paramScore, paramPasswrd){
+    getjson();
     //Add Player
     players.push({ 
         position: '', 
@@ -184,6 +183,7 @@ function createPlayer(paramAlias, paramName, paramSurname, paramScore){
         name: paramName, 
         surname: paramSurname, 
         score: paramScore ,
+        password: paramPasswrd,
         created: new Date(),
         coins: 10,
         billetes: 5,
@@ -196,6 +196,7 @@ function createPlayer(paramAlias, paramName, paramSurname, paramScore){
     //Response return
     response = code201;
     response.player = players[index];
+    savejson();
     return response;
 }
 function updatePlayer(paramAlias, paramName, paramSurname, paramScore){

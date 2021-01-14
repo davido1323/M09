@@ -1,8 +1,7 @@
 'use strict';
 const path = require('path');
 const express = require("express");
-var app = express()
-//const bodyParser = require("body-parser");
+var app = express();
 
 //Swagger
 const swaggerUi = require('swagger-ui-express');
@@ -11,10 +10,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 //ApiJS para WebSocket
 var apijs = require('./api.js');
-var { search } = require('./api.js');
-var { createPlayer } = require('./api.js');
-var { comprobarDatos } = require('./api.js');
-var { enviarJugadores } = require('./api.js');
+
 //Configuracion principal del Servidor
 const port = process.env.PORT || 3000;
 const server = app.listen(port, () => 

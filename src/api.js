@@ -12,7 +12,7 @@ let code200 = { code: 200, error: false, message: 'Player Exists' };
 let code201 = { code: 201, error: false, message: 'Player Correctly Created' };
 let code202 = { code: 202, error: false, message: 'Player Correctly Updated' };
 let code203 = { code: 203, error: false, message: 'Player Correctly Deleted' };
-let codeError502 = { code: 502, error: true, message: 'The field: name, surname, score are mandatories (the score value has to be >0)' };
+let codeError502 = { code: 502, error: true, message: 'The field: email, password, score are mandatories (the score value has to be >0)' };
 let codeError503 = { code: 503, error: true, message: 'Error: Player Exists' };
 let codeError504 = { code: 504, error: true, message: 'Error: Player not found' };
 //Mensajes de compras
@@ -26,9 +26,9 @@ var CatalogoHabilidades = [
 ];
 
 var players = [
-    { position: "1", alias: "jperez", name: "Jose", surname: "Perez", score: 1000, password: "aguacate", created: "2020-11-03T15:20:21.377Z", coins: 0, billetes: 0, habilidad1: false, habilidad2: false},
-    { position: "2", alias: "jsanz", name: "Juan", surname: "Sanz", score: 950, password: "aguacate", created: "2020-11-03T15:20:21.377Z", coins: 0, billetes: 0, habilidades: "?" },
-    { position: "3", alias: "mgutierrez", name: "Maria", surname: "Gutierrez", score: 850, password: "aguacate", created: "2020-11-03T15:20:21.377Z", coins: 0, billetes: 0, habilidades: "?" }
+    { position: "1", alias: "jperez", email: "Jose", suremail: "Perez", score: 1000, password: "aguacate", created: "2020-11-03T15:20:21.377Z", coins: 0, billetes: 0, habilidad1: false, habilidad2: false},
+    { position: "2", alias: "jsanz", email: "Juan", suremail: "Sanz", score: 950, password: "aguacate", created: "2020-11-03T15:20:21.377Z", coins: 0, billetes: 0, habilidades: "?" },
+    { position: "3", alias: "mgutierrez", email: "Maria", suremail: "Gutierrez", score: 850, password: "aguacate", created: "2020-11-03T15:20:21.377Z", coins: 0, billetes: 0, habilidades: "?" }
 ];
 let response = {
     error: false,
@@ -95,15 +95,15 @@ router.get('/players/:alias', function (req, res) {
 });
 router.post('/players/:alias', jsonParser, function (req, res) {
     var paramAlias = req.params.alias || '';
-    var paramName = req.body.name || '';
-    var paramSurname = req.body.surname || '';
+    var paramEmail = req.body.email || '';
+    var paramSuremail = req.body.suremail || '';
     var paramScore = req.body.score || '';
     var paramPasswrd = req.body.password || '';
-    if (paramAlias === '' || paramName === '' || paramSurname === '' || parseInt(paramScore) <= 0 || paramScore === '' || isNaN(paramScore) || paramPasswrd === '') {
+    if (paramAlias === '' || paramEmail === '' || paramSuremail === '' || parseInt(paramScore) <= 0 || paramScore === '' || isNaN(paramScore) || paramPasswrd === '') {
         response = codeError502;
     } else {
         
-        response = createPlayer(paramAlias, paramName, paramSurname, paramScore, paramPasswrd);
+        response = createPlayer(paramAlias, paramEmail, paramSuremail, paramScore, paramPasswrd);
         
     }
     res.send(response);
@@ -111,14 +111,14 @@ router.post('/players/:alias', jsonParser, function (req, res) {
 
 router.put('/players/:alias',jsonParser, function (req, res) {
     var paramAlias = req.params.alias || '';
-    var paramName = req.body.name || '';
-    var paramSurname = req.body.surname || '';
+    var paramEmail = req.body.email || '';
+    var paramSuremail = req.body.suremail || '';
     var paramScore = req.body.score || '';
 
-    if (paramAlias === '' || paramName === '' || paramSurname === '' || parseInt(paramScore) <= 0 || paramScore === '') {
+    if (paramAlias === '' || paramEmail === '' || paramSuremail === '' || parseInt(paramScore) <= 0 || paramScore === '') {
         response = codeError502; //Paràmetres incomplerts
     } else {
-        response = updatePlayer(paramAlias, paramName, paramSurname, paramScore);
+        response = updatePlayer(paramAlias, paramEmail, paramSuremail, paramScore);
     }
     res.send(response);
 });
@@ -174,14 +174,14 @@ router.get('/buycoins/:alias', function(req,res){
     res.send(response);
 });
 
-function createPlayer(paramAlias, paramName, paramSurname, paramScore, paramPasswrd){
+function createPlayer(paramAlias, paramEmail, paramSuremail, paramScore, paramPasswrd){
     getjson();
     //Add Player
     players.push({ 
         position: '', 
         alias: paramAlias, 
-        name: paramName, 
-        surname: paramSurname, 
+        email: paramEmail, 
+        suremail: paramSuremail, 
         score: paramScore ,
         password: paramPasswrd,
         created: new Date(),
@@ -199,9 +199,9 @@ function createPlayer(paramAlias, paramName, paramSurname, paramScore, paramPass
     savejson();
     return response;
 }
-function updatePlayer(paramAlias, paramName, paramSurname, paramScore){
+function updatePlayer(paramAlias, paramEmail, paramSuremail, paramScore){
     getjson();
-    if (paramAlias === '' || paramName === '' || paramSurname === '' || parseInt(paramScore) <= 0 || paramScore === '' || paramPasswrd === ''){
+    if (paramAlias === '' || paramEmail === '' || paramSuremail === '' || parseInt(paramScore) <= 0 || paramScore === '' || paramPasswrd === ''){
         response = codeError502
     }else{
     //Player search
@@ -212,8 +212,8 @@ function updatePlayer(paramAlias, paramName, paramSurname, paramScore){
         players[index] = { 
             position: '', 
             alias: paramAlias, 
-            name: paramName, 
-            surname: paramSurname, 
+            email: paramEmail, 
+            suremail: paramSuremail, 
             score: paramScore,
             password: paramPasswrd,
             created:  players[index].created,
@@ -252,10 +252,10 @@ function updatePlayer(paramAlias, paramName, paramSurname, paramScore){
     console.log(data)
     return ok;
 }
-function comprobarDatos(paramAlias, paramName, paramSurname, paramScore, paramPasswrd){
+function comprobarDatos(paramAlias, paramEmail, paramSuremail, paramScore, paramPasswrd){
     getjson();
     var hey = false;
-    if (paramAlias === '' || paramName === '' || paramSurname === '' || parseInt(paramScore) <= 0 || paramScore === '' || isNaN(paramScore) || paramScore === null || paramPasswrd === ''){
+    if (paramAlias === '' || paramEmail === '' || paramSuremail === '' || parseInt(paramScore) <= 0 || paramScore === '' || isNaN(paramScore) || paramScore === null || paramPasswrd === ''){
         hey = false;
     }else{
         hey = true;

@@ -26,9 +26,9 @@ var CatalogoHabilidades = [
 ];
 
 var players = [
-    { position: "1", alias: "jperez", email: "Jose", suremail: "Perez", score: 1000, password: "aguacate", created: "2020-11-03T15:20:21.377Z", coins: 0, billetes: 0, habilidad1: false, habilidad2: false},
-    { position: "2", alias: "jsanz", email: "Juan", suremail: "Sanz", score: 950, password: "aguacate", created: "2020-11-03T15:20:21.377Z", coins: 0, billetes: 0, habilidades: "?" },
-    { position: "3", alias: "mgutierrez", email: "Maria", suremail: "Gutierrez", score: 850, password: "aguacate", created: "2020-11-03T15:20:21.377Z", coins: 0, billetes: 0, habilidades: "?" }
+    { position: "1", alias: "jperez", email: "Jose",  score: 1000, password: "aguacate", created: "2020-11-03T15:20:21.377Z", coins: 0, billetes: 0, habilidad1: false, habilidad2: false},
+    { position: "2", alias: "jsanz", email: "Juan", score: 950, password: "aguacate", created: "2020-11-03T15:20:21.377Z", coins: 0, billetes: 0, habilidades: "?" },
+    { position: "3", alias: "mgutierrez", email: "Maria", score: 850, password: "aguacate", created: "2020-11-03T15:20:21.377Z", coins: 0, billetes: 0, habilidades: "?" }
 ];
 let response = {
     error: false,
@@ -96,14 +96,13 @@ router.get('/players/:alias', function (req, res) {
 router.post('/players/:alias', jsonParser, function (req, res) {
     var paramAlias = req.params.alias || '';
     var paramEmail = req.body.email || '';
-    var paramSuremail = req.body.suremail || '';
     var paramScore = req.body.score || '';
     var paramPasswrd = req.body.password || '';
-    if (paramAlias === '' || paramEmail === '' || paramSuremail === '' || parseInt(paramScore) <= 0 || paramScore === '' || isNaN(paramScore) || paramPasswrd === '') {
+    if (paramAlias === '' || paramEmail === '' || parseInt(paramScore) <= 0 || paramScore === '' || isNaN(paramScore) || paramPasswrd === '') {
         response = codeError502;
     } else {
         
-        response = createPlayer(paramAlias, paramEmail, paramSuremail, paramScore, paramPasswrd);
+        response = createPlayer(paramAlias, paramEmail, paramScore, paramPasswrd);
         
     }
     res.send(response);
@@ -112,13 +111,12 @@ router.post('/players/:alias', jsonParser, function (req, res) {
 router.put('/players/:alias',jsonParser, function (req, res) {
     var paramAlias = req.params.alias || '';
     var paramEmail = req.body.email || '';
-    var paramSuremail = req.body.suremail || '';
     var paramScore = req.body.score || '';
 
-    if (paramAlias === '' || paramEmail === '' || paramSuremail === '' || parseInt(paramScore) <= 0 || paramScore === '') {
+    if (paramAlias === '' || paramEmail === '' || parseInt(paramScore) <= 0 || paramScore === '') {
         response = codeError502; //Paràmetres incomplerts
     } else {
-        response = updatePlayer(paramAlias, paramEmail, paramSuremail, paramScore);
+        response = updatePlayer(paramAlias, paramEmail, paramScore);
     }
     res.send(response);
 });
@@ -174,14 +172,13 @@ router.get('/buycoins/:alias', function(req,res){
     res.send(response);
 });
 
-function createPlayer(paramAlias, paramEmail, paramSuremail, paramScore, paramPasswrd){
+function createPlayer(paramAlias, paramEmail, paramScore, paramPasswrd){
     getjson();
     //Add Player
     players.push({ 
         position: '', 
         alias: paramAlias, 
         email: paramEmail, 
-        suremail: paramSuremail, 
         score: paramScore ,
         password: paramPasswrd,
         created: new Date(),
@@ -199,9 +196,9 @@ function createPlayer(paramAlias, paramEmail, paramSuremail, paramScore, paramPa
     savejson();
     return response;
 }
-function updatePlayer(paramAlias, paramEmail, paramSuremail, paramScore){
+function updatePlayer(paramAlias, paramEmail, paramScore){
     getjson();
-    if (paramAlias === '' || paramEmail === '' || paramSuremail === '' || parseInt(paramScore) <= 0 || paramScore === '' || paramPasswrd === ''){
+    if (paramAlias === '' || paramEmail === '' || parseInt(paramScore) <= 0 || paramScore === '' || paramPasswrd === ''){
         response = codeError502
     }else{
     //Player search
@@ -213,7 +210,6 @@ function updatePlayer(paramAlias, paramEmail, paramSuremail, paramScore){
             position: '', 
             alias: paramAlias, 
             email: paramEmail, 
-            suremail: paramSuremail, 
             score: paramScore,
             password: paramPasswrd,
             created:  players[index].created,
@@ -252,10 +248,10 @@ function updatePlayer(paramAlias, paramEmail, paramSuremail, paramScore){
     console.log(data)
     return ok;
 }
-function comprobarDatos(paramAlias, paramEmail, paramSuremail, paramScore, paramPasswrd){
+function comprobarDatos(paramAlias, paramEmail, paramScore, paramPasswrd){
     getjson();
     var hey = false;
-    if (paramAlias === '' || paramEmail === '' || paramSuremail === '' || parseInt(paramScore) <= 0 || paramScore === '' || isNaN(paramScore) || paramScore === null || paramPasswrd === ''){
+    if (paramAlias === '' || paramEmail === '' || parseInt(paramScore) <= 0 || paramScore === '' || isNaN(paramScore) || paramScore === null || paramPasswrd === ''){
         hey = false;
     }else{
         hey = true;

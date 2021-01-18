@@ -35,14 +35,14 @@ let response = {
     code: 200,
     message: ''
 };
-function savejson(){
+function savejson(){ //Guarda jugadores en el JSON
     const str = JSON.stringify(players);
     fs.writeFile('./src/player.json', str,'utf8', (err) => { 
         if (err) throw err; 
         console.log('The file has been saved!'); 
     });
 }
-function getjson(){
+function getjson(){ //Carga los jugadores del JSON
     fs.readFile('./src/player.json', 'utf8', (err, jsonString) => {
         if (err) {
             console.log("File read failed:", err)
@@ -52,7 +52,7 @@ function getjson(){
     })
 }
 getjson();
-function UpdateRanking() {
+function UpdateRanking() { //Actualiza el ranking
     getjson();
     //Order the ranking
     players.sort((a, b) => (a.score <= b.score) ? 1 : -1);
@@ -78,7 +78,7 @@ router.get('/players', function (req, res){
     getjson();
     res.send(players);
 });
-router.get('/players/:alias', function (req, res) {
+router.get('/players/:alias', function (req, res) { //Mostrar jugador
     getjson();
     //Player search
     var index = players.findIndex(j => j.alias === req.params.alias);
@@ -92,8 +92,10 @@ router.get('/players/:alias', function (req, res) {
         response = codeError504;
     }
     res.send(response);
+    UpdateRanking();
 });
-router.post('/players/:alias', jsonParser, function (req, res) {
+router.post('/players/:alias', jsonParser, function (req, res) { //Crear jugador
+    getjson();
     var paramAlias = req.params.alias || '';
     var paramEmail = req.body.email || '';
     var paramScore = req.body.score || '';
@@ -106,9 +108,10 @@ router.post('/players/:alias', jsonParser, function (req, res) {
         
     }
     res.send(response);
+    UpdateRanking();
 });
 
-router.put('/players/:alias',jsonParser, function (req, res) {
+router.put('/players/:alias',jsonParser, function (req, res) { //Actualizar jugador
     var paramAlias = req.params.alias || '';
     var paramEmail = req.body.email || '';
     var paramScore = req.body.score || '';
@@ -121,17 +124,17 @@ router.put('/players/:alias',jsonParser, function (req, res) {
     res.send(response);
 });
 
-//Borrar jugador by https://www.codegrepper.com/code-examples/c/delete+array+item+by+id+using+app.delete
-router.delete('/players/:alias', function(req,res){
+router.delete('/players/:alias/:password', function(req,res){ //Eliminar player
     var paramAlias = req.params.alias || '';
-    if (paramAlias === '') {
+    var paramPasswrd = req.params.password || '';
+    //var paramPasswrd = req.body.password || '';
+    if (paramAlias === '' || paramPasswrd === '') {
         response = codeError502; //Paràmetres incomplerts
     } 
     else{
         getjson();
         //Player search
         var index = players.findIndex(j => j.alias === paramAlias);
-        var playerIndex = players.indexOf("Jugador");
         if (index != -1) {
             console.log("The player "+ paramAlias+" has ben deleted");
             response = code203;

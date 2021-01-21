@@ -1,6 +1,9 @@
 'use strict';
 const express = require("express");
 const app = express();
+const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 //Swagger
 const swaggerUi = require('swagger-ui-express');
@@ -53,7 +56,7 @@ io.on('connection', (socket) =>{
   socket.on('update',(data)=>{
   data = apijs.actualisarJugador(data);
   socket.emit('update', data);
-  })
+  });
 
 });
 

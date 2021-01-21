@@ -1,7 +1,6 @@
 'use strict';
-const path = require('path');
 const express = require("express");
-var app = express();
+const app = express();
 
 //Swagger
 const swaggerUi = require('swagger-ui-express');
@@ -23,11 +22,8 @@ const io = SocketIo(server);
 
 io.on('connection', (socket) =>{
     console.log('Nueva conexion de', socket.id);
-    //Escuchar evento
-  ///PRUEBAS///
-
   
-  socket.on('player:look',(data)=>{
+  socket.on('check',(data)=>{ //Get
     var player = apijs.enviarJugadores(parseInt(data));
     if(player === false){
       socket.emit('noexist', false);
@@ -37,27 +33,32 @@ io.on('connection', (socket) =>{
     }
   })
 
-  socket.on('player:create',(data)=>{
+  socket.on('create',(data)=>{ //Post
     var comprobar = apijs.search(data.alias);
-    var error = apijs.comprobarDatos(data.alias, data.name, data.surname, data.score);
-    //Emitir a todos los usuarios
+    var error = apijs.comprobarDatos(data.alias, data.email, data.score, data.password);
+
     if(comprobar === true){
       if(error === true){
-        apijs.createPlayer(data.alias, data.name, data.surname, data.score);
-        io.sockets.emit('server:playercreated', data)
+        apijs.createPlayer(data.alias, data.email, data.score, data.password);
+        socket.emit('created', data)
       }else{
-        console.log("Parametros incorrectos");
+        console.log("Wrong parameters");
       }
     }else{
-      console.log("Ya hay un usuario en con ese alias"); 
+      console.log("Alias already in use"); 
     }
   });
+
+  //Update jugador
+  socket.on('update',(data)=>{
+  data = apijs.actualisarJugador(data);
+  socket.emit('update', data);
+  })
+
 });
 
 //Uso de ApiJS
 app.use('/', apijs);
 app.use(express.urlencoded({ extended: false }));
-//HTML
-app.use(express.static(path.join(__dirname, 'public')));
 
 module.exports = app;

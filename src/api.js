@@ -12,7 +12,7 @@ let code201 = { code: 201, error: false, message: 'Player Correctly Created' };
 let code202 = { code: 202, error: false, message: 'Player Correctly Updated' };
 let code203 = { code: 203, error: false, message: 'Player Correctly Deleted' };
 //Mensajes de error
-let codeError502 = { code: 502, error: true, message: 'The field: email, password, score are mandatories (the score value has to be >0)' };
+let codeError502 = { code: 502, error: true, message: 'Campo mandatorio' };
 let codeError504 = { code: 504, error: true, message: 'Error: Player not found' };
 
 var players = [
@@ -41,8 +41,8 @@ function getjson(){ //Carga los jugadores del JSON
         players = JSON.parse(jsonString);
     })
 }
-//savejson();
 getjson();
+savejson();
 function UpdateRanking() { //Actualiza el ranking
     getjson();
     //Order the ranking
@@ -71,16 +71,23 @@ router.get('/players', function (req, res){
 });
 router.get('/players/:alias', function (req, res) { //Mostrar jugador
     getjson();
+    var paramAlias = req.params.alias || '';
     //Player search
-    var index = players.findIndex(j => j.alias === req.params.alias);
-
-    if (index >= 0) {
-        //Player exists
-        response = "Bienvenido";
-        //response.jugador = players[index];
-    } else {
-        //Player doesn't exists
-        response = "Player doesn't exist";
+    if (paramAlias === '')
+    {
+        response = "Parametro sin rellenar";
+    }
+    else
+    {
+        var index = players.findIndex(j => j.alias === req.params.alias);
+        if (index >= 0) {
+            //Player exists
+            response = "Bienvenido";
+            //response.jugador = players[index];
+        } else {
+            //Player doesn't exists
+            response = "Player doesn't exist";
+        }
     }
     res.send(response);
     UpdateRanking();
@@ -89,15 +96,14 @@ router.post('/players/:alias', jsonParser, function (req, res) { //Crear jugador
     getjson();
     var paramAlias = req.params.alias || '';
     var paramEmail = req.body.email || '';
-    var paramScore = req.body.score || '';
     var paramPasswrd = req.body.password || '';
-    if (paramAlias === '' || paramEmail === '' || parseInt(paramScore) <= 0 || paramScore === '' || isNaN(paramScore) || paramPasswrd === '') {
-        response = codeError502;
+    if (paramAlias === '' || paramEmail === '' || paramPasswrd === '') {
+        response = "Parametro sin rellenar";
     } else {
         var index = players.findIndex(j => j.alias === req.params.alias);
         if (index == -1)
         {
-        response = createPlayer(paramAlias, paramEmail, paramScore, paramPasswrd);
+        response = createPlayer(paramAlias, paramEmail, paramPasswrd);
         }
         else
         {
@@ -112,9 +118,8 @@ router.post('/players/:alias', jsonParser, function (req, res) { //Crear jugador
 router.put('/players/:alias',jsonParser, function (req, res) { //Actualizar jugador
     var paramAlias = req.params.alias || '';
     var paramEmail = req.body.email || '';
-    var paramScore = req.body.score || '';
 
-    if (paramAlias === '' || paramEmail === '' || parseInt(paramScore) <= 0 || paramScore === '') {
+    if (paramAlias === '' || paramEmail === '' ) {
         response = codeError502; //Paràmetres incomplerts
     } else {
         response = updatePlayer(paramAlias, paramEmail, paramScore);
@@ -125,9 +130,8 @@ router.put('/players/:alias',jsonParser, function (req, res) { //Actualizar juga
 router.delete('/players/:alias/:password', function(req,res){ //Eliminar player
     var paramAlias = req.params.alias || '';
     var paramPasswrd = req.params.password || '';
-    //var paramPasswrd = req.body.password || '';
     if (paramAlias === '' || paramPasswrd === '') {
-        response = codeError502; //Paràmetres incomplerts
+        response = "Parametro sin rellenar"; //Paràmetres incomplerts
     } 
     else{
         getjson();
@@ -141,7 +145,7 @@ router.delete('/players/:alias/:password', function(req,res){ //Eliminar player
             UpdateRanking();
         }
         else {
-            response = codeError504;
+            response = "Player not found";
         }
     }
     res.send(response);

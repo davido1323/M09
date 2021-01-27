@@ -41,7 +41,7 @@ function getjson(){ //Carga los jugadores del JSON
         players = JSON.parse(jsonString);
     })
 }
-savejson();
+//savejson();
 getjson();
 function UpdateRanking() { //Actualiza el ranking
     getjson();
@@ -76,11 +76,11 @@ router.get('/players/:alias', function (req, res) { //Mostrar jugador
 
     if (index >= 0) {
         //Player exists
-        response = code200;
-        response.jugador = players[index];
+        response = "Bienvenido";
+        //response.jugador = players[index];
     } else {
         //Player doesn't exists
-        response = codeError504;
+        response = "Player doesn't exist";
     }
     res.send(response);
     UpdateRanking();
@@ -94,8 +94,15 @@ router.post('/players/:alias', jsonParser, function (req, res) { //Crear jugador
     if (paramAlias === '' || paramEmail === '' || parseInt(paramScore) <= 0 || paramScore === '' || isNaN(paramScore) || paramPasswrd === '') {
         response = codeError502;
     } else {
-        
+        var index = players.findIndex(j => j.alias === req.params.alias);
+        if (index == -1)
+        {
         response = createPlayer(paramAlias, paramEmail, paramScore, paramPasswrd);
+        }
+        else
+        {
+            response = "Player already exists";
+        }
         
     }
     res.send(response);

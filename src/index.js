@@ -22,6 +22,7 @@ const server = app.listen(port, () =>
 //WebSockets
 const SocketIo = require('socket.io');
 const io = SocketIo(server);
+var { buyBillete } = require ('./api.js');
 
 io.on('connection', (socket) =>{
     console.log('Nueva conexion de', socket.id);
@@ -57,6 +58,19 @@ io.on('connection', (socket) =>{
   data = apijs.actualisarJugador(data);
   socket.emit('update', data);
   });
+
+  //Añadir billetes
+  socket.on('billeteUpdate', (data)=> {
+    var Quieras = buyBillete(data);
+    if (Quieras != "error")
+    {
+      socket.emit("UpdatearBillete", Quieras);
+    }
+    else
+    {
+      console.log("Error");
+    }
+  })
 
 });
 

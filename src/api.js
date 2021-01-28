@@ -302,9 +302,27 @@ function actualisarJugador(data)
         console.log("Jugador no existe");
     }
 }
+
+function buyBillete(data)
+{
+    getjson();
+    var index = players.findIndex(y => y.alias == data)
+    if(index != -1)
+    {
+        players[index].billetes += 100
+        response = players[index]
+        savejson();
+    }
+    else
+    {
+        response = "error";
+    }
+    return response;
+}
 module.exports = router;
 module.exports.search = search;
 module.exports.createPlayer = createPlayer;
 module.exports.comprobarDatos = comprobarDatos;
 module.exports.enviarJugadores = enviarJugadores;
 module.exports.actualisarJugador = actualisarJugador;
+module.exports.buyBillete = buyBillete;

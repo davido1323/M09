@@ -70,7 +70,10 @@ io.on('connection', (socket) =>{
     {
       console.log("Error");
     }
-  })
+  });
+  socket.on('disconnect', ()=>{
+    console.log("Jugador desconectado, ID; " + socket.id);
+  });
 
 });
 

@@ -6,16 +6,7 @@ router.use(bodyParser.urlencoded({ extended: false }));
 router.use(bodyParser.json());
 const fs = require('fs'); //Escribir y guardar json
 
-let code100 = { code: 100, error: false, message: '2-DAMVI Server Up' };
-let code200 = { code: 200, error: false, message: 'Player Exists' };
-let code201 = { code: 201, error: false, message: 'Player Correctly Created' };
-let code202 = { code: 202, error: false, message: 'Player Correctly Updated' };
-let code203 = { code: 203, error: false, message: 'Player Correctly Deleted' };
-//Mensajes de error
-let codeError502 = { code: 502, error: true, message: 'Campo mandatorio' };
-let codeError504 = { code: 504, error: true, message: 'Error: Player not found' };
-
-let existe = false;
+let existe = false; //Comprobante de si existe el player
 
 var players = [
     { position: "1", alias: "jperez", email: "Jose",  score: 1000, created: "2020-11-03T15:20:21.377Z", coins: 0, billetes: 0, habilidad1: false, habilidad2: false},
@@ -32,7 +23,7 @@ function savejson(){ //Guarda jugadores en el JSON
     const str = JSON.stringify(players);
     fs.writeFile('./src/player.json', str,'utf8', (err) => { 
         if (err) throw err; 
-        console.log('The file has been saved!'); 
+        //console.log('The file has been saved!'); 
     });
 }
 function getjson(){ //Carga los jugadores del JSON
@@ -73,13 +64,13 @@ function Check (index)
 
 router.get('/', function (req, res) {
     //code funciona ok
-    res.send(code100);
+    res.send("Servidor activado");
 });
-router.get('/ranking', function (req, res) {
+/*router.get('/ranking', function (req, res) {
     UpdateRanking();
     let ranking = { players: players };
     res.send(ranking);
-});
+});*/
 router.get('/players', function (req, res){
     getjson();
     res.send(players);
@@ -138,7 +129,7 @@ router.put('/players/:alias',jsonParser, function (req, res) { //Actualizar juga
     var paramEmail = req.body.email || '';
 
     if (paramAlias === '' || paramEmail === '' ) {
-        response = codeError502; //Paràmetres incomplerts
+        response = "Parametros sin rellenar"; //Paràmetres incomplerts
     } else {
         response = updatePlayer(paramAlias, paramEmail, paramScore);
     }
@@ -157,7 +148,7 @@ router.delete('/players/:alias/:password', function(req,res){ //Eliminar player
         var index = players.findIndex(j => j.alias === paramAlias);
         if (index != -1) {
             console.log("The player "+ paramAlias+" has ben deleted");
-            response = code203;
+            response = "Jugador eliminado";
             players.splice(index, 1);
             //Sort the ranking
             UpdateRanking();
@@ -190,6 +181,7 @@ router.get('/buycoins/:alias', function(req,res){
             players[index].coins += ganancia;
             response = codeBuy401;
             response.jugador = players[index];
+            console.log("El juagdor "+ players[index].alias+" ha comprado " + ganancia +" coins");
         }
     }
     res.send(response);
@@ -213,8 +205,9 @@ function createPlayer(paramAlias, paramEmail, paramPasswrd){
     UpdateRanking();
     //search Player Again
     index = players.findIndex(j => j.alias === paramAlias);
+    console.log(players[index]);
     //Response return
-    response = code201;
+    response = "Jugador Creado";
     response.player = players[index];
     savejson();
     return response;
@@ -222,7 +215,7 @@ function createPlayer(paramAlias, paramEmail, paramPasswrd){
 function updatePlayer(paramAlias, paramEmail, paramScore){
     getjson();
     if (paramAlias === '' || paramEmail === '' || parseInt(paramScore) <= 0 || paramScore === '' || paramPasswrd === ''){
-        response = codeError502
+        response = "Parametros sin rellenar"
     }else{
     //Player search
     var index = players.findIndex(j => j.alias === paramAlias)
@@ -246,10 +239,10 @@ function updatePlayer(paramAlias, paramEmail, paramScore){
         //search Player Again
         index = players.findIndex(j => j.alias === paramAlias);
         //Response return
-        response = code202;
+        response = "Jugador actualizado";
         response.jugador = players[index];
     } else {
-        response = codeError504;
+        response = "Player not found";
     }
 }
     return response;
@@ -311,7 +304,8 @@ function buyBillete(data)
     if(index != -1)
     {
         players[index].billetes += 100
-        response = players[index]
+        response = players[index];
+        console.log("El juagdor "+ players[index].alias+" ha comprado 100 billetes");
         savejson();
     }
     else

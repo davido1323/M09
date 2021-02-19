@@ -71,6 +71,29 @@ io.on('connection', (socket) =>{
       console.log("Error");
     }
   });
+
+  //Ranking
+  socket.on('NewRanking', (data)=> {
+    var comprobar = apijs.UpdatePuntuacion(data);
+    if (!comprobar)
+    {
+      socket.emit('error', "Error al agregar puntuacion nueva");
+    }
+    else
+    {
+      var topGamers = apijs.RankingGame();
+      io.emit('Ranking0', topGamers[0]);
+      io.emit('Ranking1', topGamers[1]);
+      io.emit('Ranking2', topGamers[2]);
+      io.emit('Ranking3', topGamers[3]);
+      io.emit('Ranking4', topGamers[4]);
+
+      socket.emit('NuevaPuntuacion', comprobar)
+    }
+
+  })
+
+  
   socket.on('disconnect', ()=>{
     console.log("Jugador desconectado, ID; " + socket.id);
   });

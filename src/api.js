@@ -9,10 +9,10 @@ const fs = require('fs'); //Escribir y guardar json
 let existe = false; //Comprobante de si existe el player
 
 var players = [
-    { position: "1", alias: "jperez",score: 1000, password: "123", created: "2020-11-03T15:20:21.377Z", coins: 0, billetes: 0, habilidad1: false, habilidad2: false},
-    { position: "2", alias: "jsanz",score: 950, password: "123", created: "2020-11-03T15:20:21.377Z", coins: 0, billetes: 0, habilidades: "?" },
-    { position: "3", alias: "mgutierrez", score: 850, password: "123", created: "2020-11-03T15:20:21.377Z", coins: 0, billetes: 0, habilidades: "?" },
-    { position: "4", alias:"david",  score: 860, password: "123", created: "2021-01-28T09:45:25.155Z", coins:10, billetes :5, habilidades:"Ninguna"}
+    { position: 1, alias: "jperez",score: 1000, password: "123", created: "2020-11-03T15:20:21.377Z", coins: 0, billetes: 0, habilidad1: false, habilidad2: false},
+    { position: 2, alias: "jsanz",score: 950, password: "123", created: "2020-11-03T15:20:21.377Z", coins: 0, billetes: 0, habilidades: "?" },
+    { position: 3, alias: "mgutierrez", score: 850, password: "123", created: "2020-11-03T15:20:21.377Z", coins: 0, billetes: 0, habilidades: "?" },
+    { position: 4, alias:"david",  score: 860, password: "123", created: "2021-01-28T09:45:25.155Z", coins:10, billetes :5, habilidades:"Ninguna"}
 ];
 let response = {
     error: false,
@@ -111,6 +111,7 @@ router.get('/players/:alias/:password', function (req, res) { //Mostrar jugador
         if (alias == paramAlias && password == paramPasswrd)
         {
             let cono = {
+                position: players[index].position,
                 alias: players[index].alias,
                 password: players[index].password,
                 score: players[index].score,
@@ -345,7 +346,7 @@ function UpdatePuntuacion(data)
     var search = players.findIndex(j => j.alias === data.alias);
     if (search != -1)
     {
-        players[search].score += parseInt(data.score);
+        players[search].score = parseInt(data.score);
         response = players[search];
         UpdateRanking();
     }

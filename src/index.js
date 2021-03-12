@@ -23,6 +23,7 @@ const server = app.listen(port, () =>
 const SocketIo = require('socket.io');
 const io = SocketIo(server);
 var { buyBillete } = require ('./api.js');
+var { getCoin } = require ('./api.js');
 
 io.on('connection', (socket) =>{
     console.log('Nueva conexion de', socket.id);
@@ -72,8 +73,23 @@ io.on('connection', (socket) =>{
     }
   });
 
+  //Añadir monedas
+  socket.on('coinUpdate', (data)=> {
+    var purchase = getCoin(data);console.log("Usado");
+    if (purchase != "error")
+    {
+      socket.emit("UpdatearMoneda", purchase);
+      console.log("Usado");
+    }
+    else
+    {
+      console.log("Error");
+    }
+  });
+
   //Ranking
   socket.on('NewRanking', (data)=> {
+    console.log("Hola");
     var comprobar = apijs.UpdatePuntuacion(data);
     if (!comprobar)
     {
@@ -81,6 +97,7 @@ io.on('connection', (socket) =>{
     }
     else
     {
+      
       var topGamers = apijs.RankingGame();
       io.emit('Ranking0', topGamers[0]);
       io.emit('Ranking1', topGamers[1]);
@@ -90,7 +107,6 @@ io.on('connection', (socket) =>{
 
       socket.emit('NuevaPuntuacion', comprobar)
     }
-
   })
 
   

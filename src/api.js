@@ -323,6 +323,24 @@ function actualisarJugador(data)
     }
 }
 
+function getCoin(data)
+{
+    getjson();
+    var index = players.findIndex(y => y.alias == data)
+    if(index != -1)
+    {
+        players[index].coins += 1
+        response = players[index];
+        console.log("El juagdor "+ players[index].alias+" consigue 1 moneda");
+        savejson();
+    }
+    else
+    {
+        response = false;
+    }
+    return response;
+}
+
 function buyBillete(data)
 {
     getjson();
@@ -392,5 +410,6 @@ module.exports.comprobarDatos = comprobarDatos;
 module.exports.enviarJugadores = enviarJugadores;
 module.exports.actualisarJugador = actualisarJugador;
 module.exports.buyBillete = buyBillete;
+module.exports.getCoin = getCoin;
 module.exports.UpdatePuntuacion = UpdatePuntuacion;
 module.exports.RankingGame = RankingGame;

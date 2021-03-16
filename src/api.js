@@ -347,9 +347,10 @@ function buyBillete(data)
     var index = players.findIndex(y => y.alias == data)
     if(index != -1)
     {
-        players[index].billetes += 100
+        players[index].billetes -= 1;
+        players[index].coins += 10;
         response = players[index];
-        console.log("El juagdor "+ players[index].alias+" ha comprado 100 billetes");
+        console.log("El jugador "+ players[index].alias+" ha comprado 1 billete");
         savejson();
     }
     else

@@ -9,10 +9,10 @@ const fs = require('fs'); //Escribir y guardar json
 let existe = false; //Comprobante de si existe el player
 
 var players = [
-    { position: 1, alias: "jperez",score: 1000, password: "123", created: "2020-11-03T15:20:21.377Z", coins: 0, billetes: 0, habilidad1: false, habilidad2: false},
-    { position: 2, alias: "jsanz",score: 950, password: "123", created: "2020-11-03T15:20:21.377Z", coins: 0, billetes: 0, habilidades: "?" },
-    { position: 3, alias: "mgutierrez", score: 850, password: "123", created: "2020-11-03T15:20:21.377Z", coins: 0, billetes: 0, habilidades: "?" },
-    { position: 4, alias:"david",  score: 860, password: "123", created: "2021-01-28T09:45:25.155Z", coins:10, billetes :5, habilidades:"Ninguna"}
+    { position: 1, alias: "jperez",score: 1000, password: "123", created: "2020-11-03T15:20:21.377Z", coins: 0, billetes: 0, habilidad1: false, habilidad2: false, avatar: 0},
+    { position: 2, alias: "jsanz",score: 950, password: "123", created: "2020-11-03T15:20:21.377Z", coins: 0, billetes: 0, habilidades: "?", avatar: 0 },
+    { position: 3, alias: "mgutierrez", score: 850, password: "123", created: "2020-11-03T15:20:21.377Z", coins: 0, billetes: 0, habilidades: "?", avatar:0 },
+    { position: 4, alias:"david",  score: 860, password: "123", created: "2021-01-28T09:45:25.155Z", coins:10, billetes :5, habilidades:"Ninguna", avatar:0}
 ];
 let response = {
     error: false,
@@ -35,8 +35,8 @@ function getjson(){ //Carga los jugadores del JSON
         players = JSON.parse(jsonString);
     })
 }
-savejson();
 getjson();
+savejson();
 function UpdateRanking() { //Actualiza el ranking
     getjson();
     //Order the ranking
@@ -116,7 +116,8 @@ router.get('/players/:alias/:password', function (req, res) { //Mostrar jugador
                 password: players[index].password,
                 score: players[index].score,
                 coins: players[index].coins,
-                billetes: players[index].billetes
+                billetes: players[index].billetes,
+                avatar: players[index].avatar
             }
             response = cono;
         }
@@ -136,6 +137,7 @@ router.post('/players/:alias', jsonParser, function (req, res) { //Crear jugador
     getjson();
     var paramAlias = req.params.alias || '';
     var paramPasswrd = req.body.password || '';
+    var paramAvatar = req.body.avatar || 0;
     var respuesta;
     if (paramAlias === '' || paramPasswrd === '') {
         respuesta = "Parametro sin rellenar";
@@ -143,7 +145,7 @@ router.post('/players/:alias', jsonParser, function (req, res) { //Crear jugador
         var index = players.findIndex(j => j.alias === req.params.alias);
         if (index == -1)
         {
-            respuesta = createPlayer(paramAlias, paramPasswrd);
+            respuesta = createPlayer(paramAlias, paramPasswrd, parseInt(paramAvatar));
         }
         else
         {
@@ -216,7 +218,7 @@ router.get('/buycoins/:alias', function(req,res){
     res.send(response);
 });
 
-function createPlayer(paramAlias, paramPasswrd){
+function createPlayer(paramAlias, paramPasswrd, paramAvatar){
     getjson();
     //Add Player
     players.push({ 
@@ -227,7 +229,8 @@ function createPlayer(paramAlias, paramPasswrd){
         created: new Date(),
         coins: 10,
         billetes: 5,
-        habilidades: "Ninguna"
+        habilidades: "Ninguna",
+        avatar: paramAvatar
     });
     //Sort the ranking
     UpdateRanking();
@@ -323,15 +326,16 @@ function actualisarJugador(data)
     }
 }
 
-function getCoin(data)
+function buyCoin(data)
 {
     getjson();
     var index = players.findIndex(y => y.alias == data)
     if(index != -1)
     {
-        players[index].coins += 1
+        players[index].billetes -= 5;
+        players[index].coins += 1;
         response = players[index];
-        console.log("El juagdor "+ players[index].alias+" consigue 1 moneda");
+        console.log("El jugador "+ players[index].alias+" compra 1 moneda");
         savejson();
     }
     else
@@ -341,16 +345,33 @@ function getCoin(data)
     return response;
 }
 
-function buyBillete(data)
+function getBillete(data)
 {
     getjson();
     var index = players.findIndex(y => y.alias == data)
     if(index != -1)
     {
-        players[index].billetes -= 1;
-        players[index].coins += 10;
-        response = players[index];
-        console.log("El jugador "+ players[index].alias+" ha comprado 1 billete");
+        players[index].billetes += 2;
+        response = players[index].billetes;
+        console.log("El jugador "+ players[index].alias+" tiene "+ players[index].billetes);
+        savejson();
+    }
+    else
+    {
+        response = false;
+    }
+    return response;
+}
+
+function getScore(data)
+{
+    getjson();
+    var index = players.findIndex(y => y.alias == data)
+    if(index != -1)
+    {
+        players[index].score += 5;
+        response = players[index].score;
+        console.log("El jugador "+ players[index].alias+" tiene estos puntos"+ players[index].score);
         savejson();
     }
     else
@@ -410,7 +431,8 @@ module.exports.createPlayer = createPlayer;
 module.exports.comprobarDatos = comprobarDatos;
 module.exports.enviarJugadores = enviarJugadores;
 module.exports.actualisarJugador = actualisarJugador;
-module.exports.buyBillete = buyBillete;
-module.exports.getCoin = getCoin;
+module.exports.getBillete = getBillete;
+module.exports.getScore = getScore;
+module.exports.buyCoin = buyCoin;
 module.exports.UpdatePuntuacion = UpdatePuntuacion;
 module.exports.RankingGame = RankingGame;

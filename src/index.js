@@ -22,8 +22,9 @@ const server = app.listen(port, () =>
 //WebSockets
 const SocketIo = require('socket.io');
 const io = SocketIo(server);
-var { buyBillete } = require ('./api.js');
-var { getCoin } = require ('./api.js');
+var { getBillete } = require ('./api.js');
+var { getScore } = require ('./api.js');
+var { buyCoin } = require ('./api.js');
 
 io.on('connection', (socket) =>{
     console.log('Nueva conexion de', socket.id);
@@ -62,7 +63,7 @@ io.on('connection', (socket) =>{
 
   //Añadir billetes
   socket.on('billeteUpdate', (data)=> {
-    var Quieras = buyBillete(data);
+    var Quieras = getBillete(data);
     if (Quieras != "error")
     {
       socket.emit("UpdatearBillete", Quieras);
@@ -73,9 +74,22 @@ io.on('connection', (socket) =>{
     }
   });
 
+  //Ganar score
+  socket.on('scoreUpdate', (data)=> {
+    var Quieras = getScore(data);
+    if (Quieras != "error")
+    {
+      socket.emit("UpdatearScore", Quieras);
+    }
+    else
+    {
+      console.log("Error");
+    }
+  });
+
   //Añadir monedas
   socket.on('coinUpdate', (data)=> {
-    var purchase = getCoin(data);console.log("Usado");
+    var purchase = buyCoin(data);console.log("Usado");
     if (purchase != "error")
     {
       socket.emit("UpdatearMoneda", purchase);
